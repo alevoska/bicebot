@@ -14,14 +14,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    content = message.content
+    content: str = message.content
     if message.author == client.user:
         return
 
-    if len(content) < 1 or content[0] != PREFIX:
+    if not content.startswith(PREFIX):
         return
 
-    roll = roller.parsecommand(message.content, PREFIX)
+    roll = roller.parsecommand(message.content[len(PREFIX):])
     if roll:
         await message.reply(roll)
 

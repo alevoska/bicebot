@@ -9,13 +9,12 @@ def roll(num: int) -> list[int]:
     return rolls
 
 
-def parsecommand(line: str, prefix: str) -> str:
-    if len(line) < 2 or line[0] != prefix:
-        return None
-
-    statement = line[len(prefix):].split()
+def parsecommand(line: str) -> str:
+    statement = line.split()
     command = statement[0]
     resist = (command[-1] == "r")
+    heat = (command[-1] == "h")
+    vice = (command[-1] == "v")
 
     try:
         count = int(re.sub(r"[^0-9]", "", command))
@@ -31,7 +30,24 @@ def parsecommand(line: str, prefix: str) -> str:
         rolls = roll(count)
         result = max(rolls)
 
-    if not resist:
+    if resist:
+        if rolls.count(6) > 1:
+            comment = "Critical! Recover 1 stress"
+        else:
+            comment = f"Take {6 - result} stress"
+    elif heat:
+        if result == 6:
+            if rolls.count(6) >= 2:
+                comment = "Reduce 5 Heat"
+            else:
+                comment = "Reduce 3 Heat"
+        elif result >= 4:
+            comment = "Reduce 2 Heat"
+        else:
+            comment = "Reduce 1 Heat"
+    elif vice:
+        comment = f"Clear {result} Stress"
+    else:
         if result == 6:
             if rolls.count(6) >= 2:
                 comment = "Critical Success"
@@ -41,10 +57,5 @@ def parsecommand(line: str, prefix: str) -> str:
             comment = "Partial Success"
         else:
             comment = "Bad Outcome"
-    else:
-        if rolls.count(6) > 1:
-            comment = "Critical! Recover 1 stress"
-        else:
-            comment = f"Take {6 - result} stress"
 
     return f"**{comment}!**\n[**{result}**] from {rolls}"
