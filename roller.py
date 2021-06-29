@@ -34,13 +34,13 @@ def parsecommand(line: str, prefix: str) -> str:
     if not resist:
         if result == 6:
             if rolls.count(6) >= 2:
-                comment = "Critical"
+                comment = "Critical Success"
             else:
-                comment = "Success"
+                comment = "Full Success"
         elif result >= 4:
-            comment = "Partial"
+            comment = "Partial Success"
         else:
-            comment = "Failure"
+            comment = "Bad Outcome"
     else:
         if rolls.count(6) > 1:
             comment = "Critical! Recover 1 stress"
